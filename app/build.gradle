@@ -1,0 +1,103 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
+    id 'com.google.gms.google-services'
+    id 'com.google.firebase.crashlytics'
+
+}
+
+def apikeyPropertiesFile = rootProject.file("apikey.properties")
+def apikeyProperties = new Properties()
+apikeyProperties.load(new FileInputStream(apikeyPropertiesFile))
+
+android {
+    namespace 'com.gps.phonetracker.numberlocator.family.tracklocation'
+    compileSdk 33
+
+    defaultConfig {
+        applicationId "com.gps.phonetracker.numberlocator.family.tracklocation"
+        minSdk 24
+        targetSdk 33
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField("String", "GG_APP_OPEN", apikeyProperties['GG_APP_OPEN'])
+        buildConfigField("String", "GG_BANNER", apikeyProperties['GG_BANNER'])
+        buildConfigField("String", "GG_NATIVE", apikeyProperties['GG_NATIVE'])
+        buildConfigField("String", "GG_FULL", apikeyProperties['GG_FULL'])
+        buildConfigField("String", "GG_REWARDED", apikeyProperties['GG_REWARDED'])
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    buildFeatures {
+        buildConfig = true
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+    buildFeatures {
+        viewBinding = true
+    }
+    dataBinding {
+        enabled true
+    }
+    lintOptions {
+        abortOnError false
+        absolutePaths false
+    }
+}
+
+dependencies {
+    implementation files('libs/adshelper.aar')
+    implementation 'com.squareup.picasso:picasso:2.8'
+    implementation 'androidx.multidex:multidex:2.0.1'
+    implementation 'com.google.android.gms:play-services-ads-identifier:18.0.1'
+    implementation 'com.google.android.gms:play-services-ads:22.2.0'
+
+    implementation("com.android.billingclient:billing-ktx:6.0.1")
+    implementation 'com.facebook.shimmer:shimmer:0.5.0'
+    implementation 'com.airbnb.android:lottie:6.0.0'
+    implementation 'com.makeramen:roundedimageview:2.3.0'
+
+    implementation 'com.google.gms:google-services:4.3.15'
+    implementation platform('com.google.firebase:firebase-bom:31.2.2')
+    implementation 'com.google.firebase:firebase-analytics-ktx:21.3.0'
+    implementation 'com.google.firebase:firebase-crashlytics-buildtools:2.9.6'
+    implementation 'com.google.firebase:firebase-crashlytics-ktx:18.3.7'
+    implementation 'com.google.firebase:firebase-config-ktx:21.4.0'
+    implementation 'me.relex:circleindicator:2.1.6'
+    implementation 'androidx.browser:browser:1.5.0'
+    implementation "com.dolatkia:animated-theme-manager:1.1.4"
+    implementation 'com.github.anastr:speedviewlib:1.6.0'
+    implementation 'com.google.android.gms:play-services-maps:18.1.0'
+    implementation 'com.google.android.gms:play-services-location:21.0.1'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.6.0'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.6.0'
+    implementation 'androidx.core:core-ktx:1.10.1'
+    implementation 'androidx.lifecycle:lifecycle-process:2.6.1'
+    implementation 'androidx.multidex:multidex:2.0.1'
+    implementation 'com.airbnb.android:lottie:6.0.0'
+    implementation 'androidx.work:work-runtime-ktx:2.8.1'
+    implementation 'androidx.media:media:1.5.0'
+
+    implementation 'androidx.core:core-ktx:1.10.1'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.9.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'com.google.firebase:firebase-firestore-ktx:24.7.0'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    implementation "org.jetbrains.kotlin:kotlin-reflect:1.8.21"
+}
