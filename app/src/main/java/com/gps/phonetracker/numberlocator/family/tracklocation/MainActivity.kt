@@ -34,9 +34,12 @@ class MainActivity : AppCompatActivity(), InterfaceMaine.View {
         setContentView(binding.root)
         _bindingMarker = binding.defaultMarker
         presenter.setOnChangeData()
-        val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
-        preGGmap = GoogleMap(mapFragment)
-        preGGmap.initialization()
+        bindingMarker.root.post {
+            binding.img.setImageBitmap(ConvertBitmap.loadBitmapFromView(bindingMarker.root)!!)
+        }
+     //   val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
+//        preGGmap = GoogleMap(mapFragment)
+//        preGGmap.initialization()
     }
 
     override fun onChangeData(users: MutableList<Users>) {
@@ -45,7 +48,7 @@ class MainActivity : AppCompatActivity(), InterfaceMaine.View {
         setContentMarker(user.pin, user.speed, user.avatar) {
             preGGmap.setMarker(
                 MarkerOptions().icon(BitmapDescriptorFactory.fromBitmap(it)).title(user.title)
-                    .position(LatLng(user.latitude, user.longitude))
+                    .position(LatLng(34.66,139.6))
             )
         }
     }
