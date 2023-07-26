@@ -8,6 +8,6 @@ interface InterfaceGoogleMap {
     }
     interface Presenter{
         fun initialization()
-        fun setMarker(markerOptions:MarkerOptions)
+        fun setMarker(markerOptions:List<MarkerOptions>)
     }
 }

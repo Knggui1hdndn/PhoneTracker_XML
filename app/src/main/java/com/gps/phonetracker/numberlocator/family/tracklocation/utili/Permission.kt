@@ -19,10 +19,10 @@ import java.security.Provider
 
 object Permission {
     fun hasPermissionLocation(context: Context): Boolean {
-        return (context.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
-                ||
-                (context.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)
-    }
+        val checkFind=context.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+        val checkCoarse=context.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+        return  checkFind|| checkCoarse
+     }
 
     fun hasEnableGPS(context: Context): Boolean {
         val locationMng = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -49,5 +49,4 @@ object Permission {
             call(true)
         }
     }
-
 }

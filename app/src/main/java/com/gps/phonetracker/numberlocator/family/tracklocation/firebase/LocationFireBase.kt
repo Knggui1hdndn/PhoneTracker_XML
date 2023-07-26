@@ -12,8 +12,7 @@ class LocationFireBase(private val view: InterfaceMaine.View) : InterfaceMaine.P
         fireBase.addSnapshotListener { qr, t ->
             if (qr != null) {
                 val users = qr.toObjects(Users::class.java)
-                Log.d("sapskdoaksd",users.size.toString())
-                 view.onChangeData(users)
+                view.onChangeData(users)
             }
         }
     }
