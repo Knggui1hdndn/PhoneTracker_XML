@@ -76,6 +76,9 @@ dependencies {
     implementation 'com.google.firebase:firebase-crashlytics-buildtools:2.9.6'
     implementation 'com.google.firebase:firebase-crashlytics-ktx:18.3.7'
     implementation 'com.google.firebase:firebase-config-ktx:21.4.0'
+ 
+
+    implementation("com.google.firebase:firebase-auth-ktx")
     implementation 'me.relex:circleindicator:2.1.6'
     implementation 'androidx.browser:browser:1.5.0'
     implementation "com.dolatkia:animated-theme-manager:1.1.4"

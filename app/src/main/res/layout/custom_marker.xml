@@ -29,7 +29,8 @@
                 android:id="@+id/imgAvatar"
                 android:layout_width="40dp"
                 android:layout_height="25dp"
-                android:background="@drawable/ic_launcher_background" />
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_launcher_background" />
         </androidx.cardview.widget.CardView>
     </FrameLayout>
 

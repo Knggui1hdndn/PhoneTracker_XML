@@ -18,9 +18,11 @@ import com.google.android.gms.tasks.Task
 import java.security.Provider
 
 object Permission {
+    val ACCESS_FINE_LOCATION= Manifest.permission.ACCESS_FINE_LOCATION
+    val ACCESS_COARSE_LOCATION=Manifest.permission.ACCESS_COARSE_LOCATION
     fun hasPermissionLocation(context: Context): Boolean {
-        val checkFind=context.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-        val checkCoarse=context.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+        val checkFind=context.checkSelfPermission(ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+        val checkCoarse=context.checkSelfPermission(ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
         return  checkFind|| checkCoarse
      }
 
@@ -29,7 +31,7 @@ object Permission {
         return locationMng.isProviderEnabled(LocationManager.GPS_PROVIDER)
     }
 
-    fun turnOnGPS(context: Context, call: (Boolean) -> Unit) {
+    fun turnOnGPS(context: Context ) {
         val request = LocationRequest
             .Builder(1000)
             .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
@@ -42,11 +44,9 @@ object Permission {
             if (it is ResolvableApiException) {
                 try {
                     it.startResolutionForResult(context as Activity, 12345)
-                } catch (sendEx: IntentSender.SendIntentException) {
+                } catch (_: IntentSender.SendIntentException) {
                 }
             }
-        }.addOnSuccessListener {
-            call(true)
         }
     }
 }
