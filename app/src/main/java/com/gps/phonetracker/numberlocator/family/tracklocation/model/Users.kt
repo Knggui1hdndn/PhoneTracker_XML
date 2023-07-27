@@ -6,6 +6,8 @@ data class Users(
     val id: String,
     val title: String,
     val avatar: String,
+    val phoneNumber: String,
+    val pass: String,
     val pin: String,
     val speed: String,
     val isShare: Boolean,
@@ -16,5 +18,6 @@ data class Users(
     val receivedFriendRequest: List<String>,
 
     ) : Serializable {
-    constructor() : this("", "", "", "", "", false, 0.0, 0.0, emptyList(), emptyList(), emptyList())
-}
+    constructor() : this("", "", "","","", "", "", false, 0.0, 0.0, emptyList(), emptyList(), emptyList())
+    constructor(title:String,phoneNumber:String,pass:String,avatar: String) : this("", title, avatar,phoneNumber,pass, "", "", false, 0.0, 0.0, emptyList(), emptyList(), emptyList())
+ }

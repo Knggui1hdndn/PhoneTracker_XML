@@ -89,7 +89,7 @@ class GoogleMap(private val smf: SupportMapFragment, private val fileBase: Locat
 
     override fun setMarker(uid: String, markerOptions: MarkerOptions) {
         if (this::map.isInitialized) {
-
+            map.clear()
             marker[uid] = markerOptions
             map.addMarker(markerOptions)
         }

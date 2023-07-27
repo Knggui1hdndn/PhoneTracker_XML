@@ -1,12 +1,17 @@
 package com.gps.phonetracker.numberlocator.family.tracklocation
 
-import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -14,7 +19,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.auth.FirebaseAuth
 import com.gps.phonetracker.numberlocator.family.tracklocation.broadcast.CurrentBattery
 import com.gps.phonetracker.numberlocator.family.tracklocation.broadcast.ReceiverCharging
 import com.gps.phonetracker.numberlocator.family.tracklocation.databinding.ActivityMainBinding
@@ -29,7 +34,6 @@ import com.gps.phonetracker.numberlocator.family.tracklocation.utili.Permission
 import com.gps.phonetracker.numberlocator.family.tracklocation.utili.ShareData
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.lang.Exception
 
@@ -53,6 +57,8 @@ class MainActivity : AppCompatActivity(), InterfaceFireBase.View, InterfaceMain.
         }
     private lateinit var intentFilter: IntentFilter
     private lateinit var receiverCharging: ReceiverCharging
+
+    @SuppressLint("ResourceType")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityMainBinding.inflate(layoutInflater)
@@ -65,6 +71,7 @@ class MainActivity : AppCompatActivity(), InterfaceFireBase.View, InterfaceMain.
         preGGmap.initialization() {
             locationFireBase.getListFriends()
         }
+
         binding.btnShare.setOnClickListener {
             if (Permission.hasPermissionLocation(this) && Permission.hasEnableGPS(this)) {
                 preGGmap.registerCallBack()
@@ -82,6 +89,8 @@ class MainActivity : AppCompatActivity(), InterfaceFireBase.View, InterfaceMain.
             if (!Permission.hasPermissionLocation(this)) {
                 Permission.turnOnGPS(this)
             }
+
+
         }
     }
 
@@ -101,10 +110,9 @@ class MainActivity : AppCompatActivity(), InterfaceFireBase.View, InterfaceMain.
 
     override fun addMarkersForUsers(users: List<Users>) {
         lifecycleScope.launch {
-            users.forEach { u ->
-                delay(1000)
+            users.forEachIndexed { index, u ->
                 locationFireBase.setOnChangeData(u.id) {
-                    setContentMarker(it.pin, it.speed, it.avatar) { bitmap ->
+                    setContentMarker(index, it.pin, it.speed, it.avatar) { bitmap ->
                         val markerOption = MarkerOptions()
                             .icon(
                                 BitmapDescriptorFactory.fromBitmap(bitmap)
@@ -118,28 +126,40 @@ class MainActivity : AppCompatActivity(), InterfaceFireBase.View, InterfaceMain.
         }
     }
 
+    @SuppressLint("ResourceType", "InflateParams")
     override fun setContentMarker(
+        position: Int,
         pin: String, speed: String, imgUrl: String, load: (Bitmap) -> Unit
     ) {
-        with(bindingMarker) {
-            txtSpeed.text = speed
-            txtcharging.text = pin
-        }
-        Picasso.get().load(imgUrl).into(binding.defaultMarker.imgAvatar, object : Callback {
-            override fun onSuccess() {
-                loadDelay(load)
-            }
+        var clonedChildView = binding.parent.getChildAt(position + 1)
 
-            override fun onError(e: Exception?) {
-                loadDelay(load)
-            }
-        })
+        if (clonedChildView == null) {
+            val inflater = LayoutInflater.from(this)
+            clonedChildView = inflater.inflate(R.layout.custom_marker, null)
+            binding.parent.addView(clonedChildView)
+        }
+
+        val txtSpeed = clonedChildView.findViewById<TextView>(R.id.txtSpeed)
+        val txtCharging = clonedChildView.findViewById<TextView>(R.id.txtcharging)
+        txtSpeed.text = speed
+        txtCharging.text = pin
+
+        Picasso.get().load(imgUrl)
+            .into(clonedChildView.findViewById(R.id.imgAvatar), object : Callback {
+                override fun onSuccess() {
+                    loadDelay(load, clonedChildView)
+                }
+
+                override fun onError(e: Exception?) {
+                    loadDelay(load, clonedChildView)
+                }
+            })
     }
 
-    private fun loadDelay(load: (Bitmap) -> Unit) {
+    private fun loadDelay(load: (Bitmap) -> Unit, clonedChildView: View) {
         Handler(Looper.getMainLooper()).postDelayed({
-            binding.mLinear.post {
-                load(ConvertBitmap.loadBitmapFromView(binding.mLinear)!!)
+            clonedChildView.post {
+                load(ConvertBitmap.loadBitmapFromView(clonedChildView)!!)
             }
         }, 500)
     }

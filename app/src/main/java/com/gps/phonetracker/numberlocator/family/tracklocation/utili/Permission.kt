@@ -18,8 +18,8 @@ import com.google.android.gms.tasks.Task
 import java.security.Provider
 
 object Permission {
-    val ACCESS_FINE_LOCATION= Manifest.permission.ACCESS_FINE_LOCATION
-    val ACCESS_COARSE_LOCATION=Manifest.permission.ACCESS_COARSE_LOCATION
+    const val ACCESS_FINE_LOCATION= Manifest.permission.ACCESS_FINE_LOCATION
+    const val ACCESS_COARSE_LOCATION=Manifest.permission.ACCESS_COARSE_LOCATION
     fun hasPermissionLocation(context: Context): Boolean {
         val checkFind=context.checkSelfPermission(ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
         val checkCoarse=context.checkSelfPermission(ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
