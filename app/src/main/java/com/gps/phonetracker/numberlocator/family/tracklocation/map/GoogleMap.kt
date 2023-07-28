@@ -72,7 +72,9 @@ class GoogleMap(private val smf: SupportMapFragment, private val fileBase: Locat
     @SuppressLint("MissingPermission")
     override fun registerCallBack() {
         fileBase.getUsesCurrent {
-            currentUser = it
+            if (it != null) {
+                currentUser = it
+            }
             fusedLocationClient.requestLocationUpdates(
                 locationRequest,
                 locationCallback,
@@ -91,7 +93,9 @@ class GoogleMap(private val smf: SupportMapFragment, private val fileBase: Locat
         if (this::map.isInitialized) {
             map.clear()
             marker[uid] = markerOptions
-            map.addMarker(markerOptions)
+            marker.forEach {
+                map.addMarker(it.value)
+            }
         }
     }
 

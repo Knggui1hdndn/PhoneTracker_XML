@@ -22,14 +22,21 @@ class Application : ProApplication() {
         super.onCreate()
         val gson = Gson();
         val shared = getSharedPreferences(Constraints.CURRENT_USER, Context.MODE_PRIVATE)
-        ShareData.currentUser= gson.fromJson(shared.getString(Constraints.CURRENT_USER,null), Users::class.java)
-         LocationFireBase(null).getUsesCurrent {
-            shared.edit {
-                val json = gson.toJson(it);
-                putString(Constraints.CURRENT_USER, json);
-                apply()
+        val user =  gson.fromJson(shared.getString(Constraints.CURRENT_USER, null), Users::class.java)
+     if (user!=null){
+         ShareData.currentUser = user
+         ShareData.uid = user.id
+     }
+        LocationFireBase(null).getUsesCurrent {
+            if (it != null) {
+                shared.edit {
+                    val json = gson.toJson(it);
+                    putString(Constraints.CURRENT_USER, json);
+                    apply()
+                }
+                ShareData.currentUser = it
+                ShareData.uid = it.id
             }
-            ShareData.currentUser = it
         }
 
     }

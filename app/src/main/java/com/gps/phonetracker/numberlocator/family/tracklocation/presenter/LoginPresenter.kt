@@ -22,17 +22,19 @@ class LoginPresenter(
         val checkPhoneNumber = phoneNumber.isNotEmpty()
         val checkPhoneMatches = Patterns.PHONE.matcher(phoneNumber).matches()
         if (checkPhoneNumber && checkPass && checkPhoneMatches) {
-            fireBase.login(phoneNumber, pass) { u,e->
-                if (u!=null){
-                    Log.d("pllllllllllll",u.toString())
+            fireBase.login(phoneNumber, pass) { u, e ->
+                if (u != null) {
                     val gson = Gson();
-                    val shared = context.getSharedPreferences(Constraints.CURRENT_USER, Context.MODE_PRIVATE)
+                    val shared =
+                        context.getSharedPreferences(Constraints.CURRENT_USER, Context.MODE_PRIVATE)
                     shared.edit {
                         val json = gson.toJson(u);
                         putString(Constraints.CURRENT_USER, json);
                         apply()
                     }
                     ShareData.currentUser = u
+                    ShareData.uid = u.id
+                    view.success("ok")
                 }
             }
         } else {
@@ -58,6 +60,5 @@ class LoginPresenter(
             if (!checkPhoneNumber) view.error("Không bỏ trống số điện thoại")
             else if (!checkPhoneMatches) view.error("Số điện thoại không đúng định dạng")
         }
-
     }
 }

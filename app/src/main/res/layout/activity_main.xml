@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".activity.MainActivity">
 
   <ScrollView
       android:layout_width="match_parent"
@@ -29,11 +29,7 @@
       </LinearLayout>
   </ScrollView>
 
-    <Button
-        android:id="@+id/btnShare"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="80dp" />
+
 
     <ImageView
         android:id="@+id/img1"
@@ -45,5 +41,11 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="180dp" />
+         />
+    <Button
+        android:id="@+id/btnShare"
+        android:text="Share"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="80dp" />
 </FrameLayout>

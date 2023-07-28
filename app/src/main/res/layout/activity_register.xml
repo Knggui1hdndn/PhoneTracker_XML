@@ -8,6 +8,11 @@
     android:orientation="vertical"
     tools:context=".activity.Login">
 
+    <EditText
+        android:id="@+id/edtTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Title" />
 
     <EditText
         android:id="@+id/edtPhoneNumber"
@@ -21,16 +26,12 @@
         android:layout_height="wrap_content"
         android:hint="Password" />
 
-    <Button
-        android:id="@+id/btnLogin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="btnLogin" />
 
     <Button
         android:id="@+id/btnRegister"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="btnRegister" />
+
 
 </LinearLayout>

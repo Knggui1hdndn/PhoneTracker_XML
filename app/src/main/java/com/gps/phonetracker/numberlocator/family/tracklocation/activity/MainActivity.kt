@@ -1,4 +1,4 @@
-package com.gps.phonetracker.numberlocator.family.tracklocation
+package com.gps.phonetracker.numberlocator.family.tracklocation.activity
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -10,16 +10,14 @@ import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.firebase.auth.FirebaseAuth
+import com.gps.phonetracker.numberlocator.family.tracklocation.R
 import com.gps.phonetracker.numberlocator.family.tracklocation.broadcast.CurrentBattery
 import com.gps.phonetracker.numberlocator.family.tracklocation.broadcast.ReceiverCharging
 import com.gps.phonetracker.numberlocator.family.tracklocation.databinding.ActivityMainBinding
@@ -34,7 +32,6 @@ import com.gps.phonetracker.numberlocator.family.tracklocation.utili.Permission
 import com.gps.phonetracker.numberlocator.family.tracklocation.utili.ShareData
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
-import kotlinx.coroutines.launch
 import java.lang.Exception
 
 
@@ -50,7 +47,9 @@ class MainActivity : AppCompatActivity(), InterfaceFireBase.View, InterfaceMain.
     private val permissionsLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { granted ->
             if (granted.entries.all { it.value }) {
-
+                if (!Permission.hasPermissionLocation(this)) {
+                    Permission.turnOnGPS(this)
+                }
             } else {
                 ShareData.Toast(this, "Vui lòng cấp quyền")
             }
@@ -75,6 +74,9 @@ class MainActivity : AppCompatActivity(), InterfaceFireBase.View, InterfaceMain.
         binding.btnShare.setOnClickListener {
             if (Permission.hasPermissionLocation(this) && Permission.hasEnableGPS(this)) {
                 preGGmap.registerCallBack()
+                locationFireBase.onShare(true){
+                    ShareData.isShare=it
+                }
                 return@setOnClickListener
             }
 
@@ -86,11 +88,6 @@ class MainActivity : AppCompatActivity(), InterfaceFireBase.View, InterfaceMain.
                     )
                 )
             }
-            if (!Permission.hasPermissionLocation(this)) {
-                Permission.turnOnGPS(this)
-            }
-
-
         }
     }
 
@@ -109,23 +106,20 @@ class MainActivity : AppCompatActivity(), InterfaceFireBase.View, InterfaceMain.
     }
 
     override fun addMarkersForUsers(users: List<Users>) {
-        lifecycleScope.launch {
-            users.forEachIndexed { index, u ->
-                locationFireBase.setOnChangeData(u.id) {
-                    setContentMarker(index, it.pin, it.speed, it.avatar) { bitmap ->
-                        val markerOption = MarkerOptions()
-                            .icon(
-                                BitmapDescriptorFactory.fromBitmap(bitmap)
-                            )
-                            .title(it.title)
-                            .position(LatLng(it.latitude, it.longitude))
-                        preGGmap.setMarker(it.id, markerOption)
-                    }
+        users.forEachIndexed { index, u ->
+            locationFireBase.setOnChangeData(u.id) {
+                setContentMarker(index, it.pin, it.speed, it.avatar) { bitmap ->
+                    val markerOption = MarkerOptions()
+                        .icon(
+                            BitmapDescriptorFactory.fromBitmap(bitmap)
+                        )
+                        .title(it.title)
+                        .position(LatLng(it.latitude, it.longitude))
+                    preGGmap.setMarker(it.id, markerOption)
                 }
             }
         }
     }
-
     @SuppressLint("ResourceType", "InflateParams")
     override fun setContentMarker(
         position: Int,
@@ -154,6 +148,7 @@ class MainActivity : AppCompatActivity(), InterfaceFireBase.View, InterfaceMain.
                     loadDelay(load, clonedChildView)
                 }
             })
+        loadDelay(load, clonedChildView)
     }
 
     private fun loadDelay(load: (Bitmap) -> Unit, clonedChildView: View) {
@@ -165,6 +160,6 @@ class MainActivity : AppCompatActivity(), InterfaceFireBase.View, InterfaceMain.
     }
 
     override fun onCurrentBattery(int: Int) {
-        if (!ShareData.isShare) locationFireBase.putPin("$int %")
+         if (ShareData.isShare) locationFireBase.putPin("$int %")
     }
 }
