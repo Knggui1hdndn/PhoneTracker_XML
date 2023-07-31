@@ -5,8 +5,11 @@ import android.util.Log
 import androidx.core.content.edit
 import com.access.pro.application.ProApplication
 import com.access.pro.config.AdsConfigModel
+import com.google.firebase.FirebaseApp
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
 import com.gps.phonetracker.numberlocator.family.tracklocation.BuildConfig
+import com.gps.phonetracker.numberlocator.family.tracklocation.firebase.FriendsFireBase
 import com.gps.phonetracker.numberlocator.family.tracklocation.firebase.LocationFireBase
 import com.gps.phonetracker.numberlocator.family.tracklocation.model.Users
 import com.gps.phonetracker.numberlocator.family.tracklocation.utili.Constraints
@@ -14,6 +17,8 @@ import com.gps.phonetracker.numberlocator.family.tracklocation.utili.ShareData
 
 class Application : ProApplication() {
     override fun onCreate() {
+        FirebaseApp.initializeApp(this)
+        FirebaseFirestore.getInstance().enableNetwork()
         AdsConfigModel.GG_APP_OPEN = BuildConfig.GG_APP_OPEN
         AdsConfigModel.GG_BANNER = BuildConfig.GG_BANNER
         AdsConfigModel.GG_NATIVE = BuildConfig.GG_NATIVE
@@ -27,7 +32,7 @@ class Application : ProApplication() {
          ShareData.currentUser = user
          ShareData.uid = user.id
      }
-        LocationFireBase(null).getUsesCurrent {
+        FriendsFireBase(null,null).getUsesCurrent {
             if (it != null) {
                 shared.edit {
                     val json = gson.toJson(it);

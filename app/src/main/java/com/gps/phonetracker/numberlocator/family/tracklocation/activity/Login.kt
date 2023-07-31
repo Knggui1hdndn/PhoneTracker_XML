@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import com.gps.phonetracker.numberlocator.family.tracklocation.databinding.ActivityLoginBinding
+import com.gps.phonetracker.numberlocator.family.tracklocation.firebase.AccountFireBase
 import com.gps.phonetracker.numberlocator.family.tracklocation.firebase.LocationFireBase
 import com.gps.phonetracker.numberlocator.family.tracklocation.`interface`.InterfaceLogin
 import com.gps.phonetracker.numberlocator.family.tracklocation.presenter.LoginPresenter
@@ -15,7 +16,7 @@ class Login : AppCompatActivity(), InterfaceLogin.View {
     private var _binding: ActivityLoginBinding? = null
     private val binding get() = _binding!!
     private var uri: Uri? = null
-    private val locationFireBase = LocationFireBase(null)
+    private val accountFireBase = AccountFireBase()
 
     private val pickMedia =
         registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
@@ -30,7 +31,7 @@ class Login : AppCompatActivity(), InterfaceLogin.View {
             startActivity(Intent(this@Login, MainActivity::class.java))
             finish()
         }
-        val loginPresenter = LoginPresenter(this, this, locationFireBase)
+        val loginPresenter = LoginPresenter(this, this, accountFireBase)
         with(binding) {
             btnLogin.setOnClickListener {
                 loginPresenter.login(

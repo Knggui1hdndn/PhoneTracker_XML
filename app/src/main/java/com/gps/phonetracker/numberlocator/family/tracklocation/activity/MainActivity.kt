@@ -22,6 +22,7 @@ import com.gps.phonetracker.numberlocator.family.tracklocation.broadcast.Current
 import com.gps.phonetracker.numberlocator.family.tracklocation.broadcast.ReceiverCharging
 import com.gps.phonetracker.numberlocator.family.tracklocation.databinding.ActivityMainBinding
 import com.gps.phonetracker.numberlocator.family.tracklocation.databinding.CustomMarkerBinding
+import com.gps.phonetracker.numberlocator.family.tracklocation.firebase.FriendsFireBase
 import com.gps.phonetracker.numberlocator.family.tracklocation.firebase.LocationFireBase
 import com.gps.phonetracker.numberlocator.family.tracklocation.`interface`.InterfaceFireBase
 import com.gps.phonetracker.numberlocator.family.tracklocation.`interface`.InterfaceMain
@@ -35,15 +36,14 @@ import com.squareup.picasso.Picasso
 import java.lang.Exception
 
 
-class MainActivity : AppCompatActivity(), InterfaceFireBase.View, InterfaceMain.View,
+class MainActivity : AppCompatActivity(), InterfaceFireBase.View.LiveLocation, InterfaceMain.View,
     CurrentBattery {
     private var _binding: ActivityMainBinding? = null
     private var _bindingMarker: CustomMarkerBinding? = null
     private val binding get() = _binding!!
-    private var i = 0
-    private val bindingMarker get() = _bindingMarker!!
     private lateinit var preGGmap: GoogleMap
-    private var locationFireBase = LocationFireBase(this)
+    private var locationFireBase = LocationFireBase( )
+    private var friendsFireBase = FriendsFireBase(null, this)
     private val permissionsLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { granted ->
             if (granted.entries.all { it.value }) {
@@ -64,18 +64,26 @@ class MainActivity : AppCompatActivity(), InterfaceFireBase.View, InterfaceMain.
         setContentView(binding.root)
         _bindingMarker = binding.defaultMarker
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
-        preGGmap = GoogleMap(mapFragment, locationFireBase)
+        preGGmap = GoogleMap(mapFragment, locationFireBase, friendsFireBase)
         intentFilter = IntentFilter(Intent.ACTION_BATTERY_CHANGED)
         receiverCharging = ReceiverCharging(this)
+
         preGGmap.initialization() {
-            locationFireBase.getListFriends()
+            friendsFireBase.getListFriends()
+        }
+
+        binding.btnSearch.setOnClickListener {
+            startActivity(Intent(this@MainActivity, SearchActivity::class.java))
         }
 
         binding.btnShare.setOnClickListener {
             if (Permission.hasPermissionLocation(this) && Permission.hasEnableGPS(this)) {
                 preGGmap.registerCallBack()
-                locationFireBase.onShare(true){
-                    ShareData.isShare=it
+                locationFireBase.onShare(true) {
+                    ShareData.isShare = it
+                    locationFireBase.putPin(
+                        ShareData.getBatteryPercentage(this@MainActivity).toString() + " %"
+                    )
                 }
                 return@setOnClickListener
             }
@@ -120,6 +128,7 @@ class MainActivity : AppCompatActivity(), InterfaceFireBase.View, InterfaceMain.
             }
         }
     }
+
     @SuppressLint("ResourceType", "InflateParams")
     override fun setContentMarker(
         position: Int,
@@ -160,6 +169,6 @@ class MainActivity : AppCompatActivity(), InterfaceFireBase.View, InterfaceMain.
     }
 
     override fun onCurrentBattery(int: Int) {
-         if (ShareData.isShare) locationFireBase.putPin("$int %")
+        if (ShareData.isShare) locationFireBase.putPin("$int %")
     }
 }

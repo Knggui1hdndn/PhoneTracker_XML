@@ -17,13 +17,18 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.tasks.CancellationTokenSource
+import com.gps.phonetracker.numberlocator.family.tracklocation.firebase.FriendsFireBase
 import com.gps.phonetracker.numberlocator.family.tracklocation.firebase.LocationFireBase
 import com.gps.phonetracker.numberlocator.family.tracklocation.`interface`.InterfaceGoogleMap
 import com.gps.phonetracker.numberlocator.family.tracklocation.model.Users
 import java.util.concurrent.ConcurrentHashMap
 
 
-class GoogleMap(private val smf: SupportMapFragment, private val fileBase: LocationFireBase) :
+class GoogleMap(
+    private val smf: SupportMapFragment,
+    private val locationFireBase: LocationFireBase,
+    private val friendsFireBase: FriendsFireBase
+) :
     InterfaceGoogleMap.Presenter {
     @SuppressLint("UseRequireInsteadOfGet")
     private val context = smf.context!!
@@ -49,7 +54,7 @@ class GoogleMap(private val smf: SupportMapFragment, private val fileBase: Locat
                 if (lastLocation.hasSpeed()) {
                     speed = lastLocation.speed * 3.6
                 }
-                fileBase.putLocation(
+                locationFireBase.putLocation(
                     latLng = LatLng(
                         lastLocation.latitude,
                         lastLocation.longitude
@@ -71,7 +76,7 @@ class GoogleMap(private val smf: SupportMapFragment, private val fileBase: Locat
 
     @SuppressLint("MissingPermission")
     override fun registerCallBack() {
-        fileBase.getUsesCurrent {
+        friendsFireBase.getUsesCurrent {
             if (it != null) {
                 currentUser = it
             }

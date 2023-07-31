@@ -5,6 +5,7 @@ import android.util.Log
 import android.util.Patterns
 import androidx.core.content.edit
 import com.google.gson.Gson
+import com.gps.phonetracker.numberlocator.family.tracklocation.firebase.AccountFireBase
 import com.gps.phonetracker.numberlocator.family.tracklocation.firebase.LocationFireBase
 import com.gps.phonetracker.numberlocator.family.tracklocation.`interface`.InterfaceLogin
 import com.gps.phonetracker.numberlocator.family.tracklocation.model.Users
@@ -15,7 +16,7 @@ import com.gps.phonetracker.numberlocator.family.tracklocation.utili.ShareData
 class LoginPresenter(
     private val context: Context,
     private val view: InterfaceLogin.View,
-    private val fireBase: LocationFireBase
+    private val fireBase: AccountFireBase
 ) : InterfaceLogin.Presenter {
     override fun login(phoneNumber: String, pass: String) {
         val checkPass = pass.isNotEmpty()
@@ -25,8 +26,7 @@ class LoginPresenter(
             fireBase.login(phoneNumber, pass) { u, e ->
                 if (u != null) {
                     val gson = Gson();
-                    val shared =
-                        context.getSharedPreferences(Constraints.CURRENT_USER, Context.MODE_PRIVATE)
+                    val shared = context.getSharedPreferences(Constraints.CURRENT_USER, Context.MODE_PRIVATE)
                     shared.edit {
                         val json = gson.toJson(u);
                         putString(Constraints.CURRENT_USER, json);
@@ -35,6 +35,8 @@ class LoginPresenter(
                     ShareData.currentUser = u
                     ShareData.uid = u.id
                     view.success("ok")
+                }else{
+                    view.error("error")
                 }
             }
         } else {

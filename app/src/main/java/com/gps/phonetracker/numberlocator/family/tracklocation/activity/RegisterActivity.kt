@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.gps.phonetracker.numberlocator.family.tracklocation.databinding.ActivityRegisterBinding
+import com.gps.phonetracker.numberlocator.family.tracklocation.firebase.AccountFireBase
 import com.gps.phonetracker.numberlocator.family.tracklocation.firebase.LocationFireBase
 import com.gps.phonetracker.numberlocator.family.tracklocation.`interface`.InterfaceLogin
 import com.gps.phonetracker.numberlocator.family.tracklocation.model.Users
@@ -16,13 +17,13 @@ class RegisterActivity : AppCompatActivity(), InterfaceLogin.View {
     private var _binding: ActivityRegisterBinding? = null
     private val binding get() = _binding!!
     private var uri: Uri? = null
-    private val locationFireBase = LocationFireBase(null)
+    private val accountFireBase = AccountFireBase( )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        val loginPresenter = LoginPresenter(this, this, locationFireBase)
+        val loginPresenter = LoginPresenter(this, this, accountFireBase)
         with(binding) {
             btnRegister.setOnClickListener {
                 loginPresenter.register(
