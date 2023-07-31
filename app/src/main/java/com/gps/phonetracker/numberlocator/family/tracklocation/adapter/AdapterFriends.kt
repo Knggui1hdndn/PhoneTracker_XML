@@ -25,9 +25,9 @@ class AdapterFriends(private var list: List<Users>, private val friendsFireBase:
                 val checkFriends = currentUser.friends.contains(users.id)
                 val checkSentFriendRequest = currentUser.sentFriendRequest.contains(users.id)
                 val checkReceivedFriendRequest = currentUser.receivedFriendRequest.contains(users.id)
-                mLinearReciver.visibility =
-                    if (checkReceivedFriendRequest) View.VISIBLE else View.GONE
+                mLinearReciver.visibility =  if (checkReceivedFriendRequest) View.VISIBLE else View.GONE
                 btnCancel.visibility = if (checkSentFriendRequest) View.VISIBLE else View.GONE
+
                 imgOpstion.setImageDrawable(
                     if (checkFriends)
                         context.getDrawable(R.drawable.baseline_menu_24)
