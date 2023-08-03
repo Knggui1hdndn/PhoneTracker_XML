@@ -44,7 +44,7 @@ interface InterfaceFireBase {
         interface Account {
             fun checkPhoneNumberNotExist(phoneNumber: String, call: (Boolean) -> Unit)
 
-            fun register(users: Users)
+            fun register(users: Users, call: (Boolean, String?) -> Unit)
 
             fun updateImage(url: String, call: (Boolean) -> Unit)
 
